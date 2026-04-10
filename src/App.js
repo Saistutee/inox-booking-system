@@ -12,86 +12,90 @@ import Profile from "./Profile";
 import ThankYou from "./ThankYou";
 import ForgotPassword from "./ForgotPassword";
 
-function App() {
-
-const [user,setUser]=useState(null);
-
-useEffect(()=>{
-const saved=localStorage.getItem("currentUser");
-if(saved) setUser(JSON.parse(saved));
-},[]);
-
-const PrivateRoute=({children})=>{
-return user? children : <Navigate to="/" />;
+const PrivateRoute = ({ user, children }) => {
+  return user ? children : <Navigate to="/" replace />;
 };
 
-return(
+function App() {
+  const [user, setUser] = useState(null);
 
-<>
-<Navbar user={user} setUser={setUser}/>
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("currentUser");
+      if (saved) setUser(JSON.parse(saved));
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
 
-<Routes>
+  return (
+    <>
+      <Navbar user={user} setUser={setUser} />
 
-<Route path="/" element={<Home user={user}/>}/>
+      <Routes>
+        <Route path="/" element={<Home user={user} />} />
 
-<Route path="/movies"
-element={
-<PrivateRoute>
-<Movies/>
-</PrivateRoute>
-}
-/>
+        <Route
+          path="/movies"
+          element={
+            <PrivateRoute user={user}>
+              <Movies />
+            </PrivateRoute>
+          }
+        />
 
-<Route path="/theatres"
-element={
-<PrivateRoute>
-<Theatres/>
-</PrivateRoute>
-}
-/>
+        <Route
+          path="/theatres"
+          element={
+            <PrivateRoute user={user}>
+              <Theatres />
+            </PrivateRoute>
+          }
+        />
 
-<Route path="/booking"
-element={
-<PrivateRoute>
-<Booking/>
-</PrivateRoute>
-}
-/>
+        <Route
+          path="/booking"
+          element={
+            <PrivateRoute user={user}>
+              <Booking />
+            </PrivateRoute>
+          }
+        />
 
-<Route path="/food"
-element={
-<PrivateRoute>
-<Food/>
-</PrivateRoute>
-}
-/>
+        <Route
+          path="/food"
+          element={
+            <PrivateRoute user={user}>
+              <Food />
+            </PrivateRoute>
+          }
+        />
 
-<Route path="/ticket"
-element={
-<PrivateRoute>
-<Ticket user={user}/>
-</PrivateRoute>
-}
-/>
+        <Route
+          path="/ticket"
+          element={
+            <PrivateRoute user={user}>
+              <Ticket user={user} />
+            </PrivateRoute>
+          }
+        />
 
-<Route path="/profile"
-element={
-<PrivateRoute>
-<Profile/>
-</PrivateRoute>
-}
-/>
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute user={user}>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
 
-<Route path="/success" element={<ThankYou/>}/>
+        <Route path="/success" element={<ThankYou />} />
+        <Route path="/forgot" element={<ForgotPassword />} />
 
-<Route path="/forgot" element={<ForgotPassword/>}/>
-
-</Routes>
-
-</>
-
-);
-
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </>
+  );
 }
 
 export default App;
